@@ -20,7 +20,7 @@ def predict_feedback():
         """
         <style>
         body {
-            background-image: url('https://www.istockphoto.com/photo/close-up-woman-sitting-and-orde-food-online-on-laptop-computer-in-add-to-cart-gm1043459006-279306758?utm_campaign=srp_photos_top&utm_content=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2FOnline-Food&utm_medium=affiliate&utm_source=unsplash&utm_term=Online+Food%3A%3A%3A');  /* Ganti URL ini dengan URL gambar latar belakang Anda */
+            background-image: url('https://www.abestfashion.com/wp-content/uploads/2019/09/Online-Food-Delivery-Takeaway.jpg');  /* Ganti URL ini dengan URL gambar latar belakang Anda */
             background-size: cover;
         }
         .stApp {
