@@ -23,7 +23,7 @@ def main():
         submit_button = st.form_submit_button(label='Predict')
 
         if submit_button:
-            # Konversi input ke DataFrame dengan nama kolom yang sesuai
+            # Konversi input ke DataFrame dengan nama kolom yang sesuai dengan model
             gender_map = {'Male': 0, 'Female': 1}
             income_map = {
                 'No Income': 0,
@@ -41,8 +41,11 @@ def main():
             })
 
             # Prediksi
-            prediction = model.predict(data)[0]
-            st.write(f'Prediction: {"Yes" if prediction == 1 else "No"}')
+            try:
+                prediction = model.predict(data)[0]
+                st.write(f'Prediction: {"Yes" if prediction == 1 else "No"}')
+            except ValueError as e:
+                st.write(f'Error in prediction: {e}')
 
 if __name__ == "__main__":
     main()
