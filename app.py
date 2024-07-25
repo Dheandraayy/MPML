@@ -2,6 +2,10 @@ import streamlit as st
 import joblib
 import pandas as pd
 import os
+import logging
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
 
 # Memuat model
 model_path = 'best_model_xgb.pkl'
@@ -43,12 +47,20 @@ def main():
             st.write("Input Data for Prediction:")
             st.write(data)
 
+            # Logging input data
+            logging.info(f"Input Data: {data}")
+
             # Prediksi
             try:
                 prediction = model.predict(data)[0]
                 st.write(f'Prediction: {"Positive" if prediction == 1 else "Negative"}')
+
+                # Logging hasil prediksi
+                logging.info(f"Prediction: {'Positive' if prediction == 1 else 'Negative'}")
+
             except ValueError as e:
                 st.write(f'Error in prediction: {e}')
+                logging.error(f'Error in prediction: {e}')
 
 if __name__ == "__main__":
     main()
