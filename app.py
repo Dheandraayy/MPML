@@ -4,14 +4,14 @@ import pandas as pd
 import os
 
 # Memuat model
-model_path = 'best_model_xgb.pkl'
+model_path = 'best_model_xgb_feedback.pkl'
 if not os.path.isfile(model_path):
     raise FileNotFoundError(f"File model {model_path} tidak ada.")
 model = joblib.load(model_path)
 
 # Aplikasi Streamlit
 def main():
-    st.title('Customer Prediction App')
+    st.title('Customer Feedback Prediction App')
 
     # Form untuk input
     with st.form(key='prediction_form'):
@@ -43,7 +43,7 @@ def main():
             # Prediksi
             try:
                 prediction = model.predict(data)[0]
-                st.write(f'Prediction: {"Yes" if prediction == 1 else "No"}')
+                st.write(f'Prediction: {"Positive" if prediction == 1 else "Negative"}')
             except ValueError as e:
                 st.write(f'Error in prediction: {e}')
 
