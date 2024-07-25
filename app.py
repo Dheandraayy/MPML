@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 # Memeriksa apakah file model ada dan memuatnya
-model_file = 'best_model_xgb.pkl'
+model_file = 'best_model_knn.pkl'
 if os.path.exists(model_file):
     model = joblib.load(model_file)
     print(f"Model {model_file} berhasil dimuat.")
