@@ -40,6 +40,9 @@ def main():
                 'Family size': [family_size]
             })
 
+            st.write("Input Data for Prediction:")
+            st.write(data)
+
             # Prediksi
             try:
                 prediction = model.predict(data)[0]
