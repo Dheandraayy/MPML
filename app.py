@@ -1,5 +1,5 @@
 import streamlit as st
-import pickle
+import joblib
 import numpy as np
 import os
 
@@ -7,12 +7,11 @@ import os
 model_file = 'best_model_knn.pkl'
 if os.path.exists(model_file):
     try:
-        with open(model_file, 'rb') as file:
-            model = pickle.load(file)
-            # Check the type of the loaded model
-            if not hasattr(model, 'predict'):
-                raise TypeError("Loaded object does not have a 'predict' method")
-            print(f"Model {model_file} berhasil dimuat.")
+        model = joblib.load(model_file)
+        # Check if the loaded object is an instance of KNeighborsClassifier
+        if not hasattr(model, 'predict'):
+            raise TypeError("Loaded object does not have a 'predict' method")
+        print(f"Model {model_file} berhasil dimuat.")
     except Exception as e:
         st.error(f"Error loading model: {str(e)}")
         st.stop()
