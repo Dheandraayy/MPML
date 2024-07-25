@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+import streamlit as st
 import sqlite3 as sql
 import joblib
 import numpy as np
@@ -20,37 +20,35 @@ CREATE TABLE IF NOT EXISTS customer (
 print("Tabel berhasil dibuat")
 conn.close()
 
-# Inisialisasi aplikasi Flask
-app = Flask(__name__)
-
 # Memeriksa apakah file model ada dan memuatnya
 model_file = 'best_model_xgb.pkl'
 if os.path.exists(model_file):
     model = joblib.load(model_file)
     print(f"Model {model_file} berhasil dimuat.")
 else:
-    print(f"File {model_file} tidak ditemukan. Pastikan file tersebut ada di direktori yang benar.")
+    st.error(f"File {model_file} tidak ditemukan. Pastikan file tersebut ada di direktori yang benar.")
+    st.stop()
 
-@app.route('/')
-def home():
-    return render_template('home.html')
+# Halaman Utama
+st.title("Customer Feedback Prediction App")
 
-@app.route('/enternew')
-def new_customer():
-    return render_template('datacustomer.html')
+# Pilihan Menu
+menu = ["Home", "Add Customer", "List Customers", "Predict Feedback"]
+choice = st.sidebar.selectbox("Menu", menu)
 
-@app.route('/addrec', methods=['POST', 'GET'])
-def addrec():
-    if request.method == 'POST':
+# Fungsi untuk menambah data pelanggan
+def add_customer():
+    st.subheader("Enter Customer Information")
+    with st.form(key="customer_form"):
+        id = st.text_input("ID")
+        age = st.number_input("Age", min_value=0, step=1)
+        gender = st.selectbox("Gender", ["Male", "Female"])
+        monthly_income = st.selectbox("Monthly Income", ["No Income", "Below Rs.10000", "10001 to 25000", "25001 to 50000", "More than 50000"])
+        family_size = st.number_input("Family Size", min_value=1, step=1)
+        submit_button = st.form_submit_button(label="Add Record")
+
+    if submit_button:
         try:
-            # Mengambil data dari formulir
-            id = request.form['id']
-            age = request.form['Age']
-            gender = request.form['Gender']
-            monthly_income = request.form['Monthly_Income']
-            family_size = request.form['Family_Size']
-
-            # Memasukkan data ke database
             with sql.connect("customer.db") as con:
                 cur = con.cursor()
                 cur.execute('''
@@ -58,36 +56,38 @@ def addrec():
                     VALUES (?, ?, ?, ?, ?)
                 ''', (id, age, gender, monthly_income, family_size))
                 con.commit()
-                msg = "Rekaman berhasil ditambahkan"
+                st.success("Record added successfully")
         except Exception as e:
             con.rollback()
-            msg = f"Terjadi kesalahan saat menambah rekaman: {str(e)}"
+            st.error(f"Error occurred: {str(e)}")
         finally:
-            return render_template("result.html", msg=msg)
             con.close()
 
-@app.route('/list')
-def list():
+# Fungsi untuk menampilkan daftar pelanggan
+def list_customers():
+    st.subheader("Customer List")
     con = sql.connect("customer.db")
-    con.row_factory = sql.Row
-
     cur = con.cursor()
     cur.execute("SELECT * FROM customer")
+    data = cur.fetchall()
+    con.close()
+    if data:
+        st.table(data)
+    else:
+        st.warning("No customer data found")
 
-    rows = cur.fetchall()
-    return render_template("list.html", rows=rows)
+# Fungsi untuk prediksi feedback pelanggan
+def predict_feedback():
+    st.subheader("Predict Customer Feedback")
+    with st.form(key="predict_form"):
+        age = st.number_input("Age", min_value=0, step=1)
+        gender = st.selectbox("Gender", ["Male", "Female"])
+        monthly_income = st.selectbox("Monthly Income", ["No Income", "Below Rs.10000", "10001 to 25000", "25001 to 50000", "More than 50000"])
+        family_size = st.number_input("Family Size", min_value=1, step=1)
+        predict_button = st.form_submit_button(label="Predict Feedback")
 
-@app.route('/predict', methods=['GET', 'POST'])
-def predict():
-    if request.method == 'POST':
+    if predict_button:
         try:
-            # Mengambil data dari formulir untuk prediksi
-            age = float(request.form['Age'])
-            family_size = float(request.form['Family_Size'])
-            gender = request.form['Gender']
-            monthly_income = request.form['Monthly_Income']
-
-            # Konversi input menjadi format yang sesuai dengan model
             gender_map = {'Male': 0, 'Female': 1}
             income_map = {
                 'No Income': 0,
@@ -96,21 +96,21 @@ def predict():
                 '25001 to 50000': 3,
                 'More than 50000': 4
             }
-
             gender = gender_map[gender]
             monthly_income = income_map[monthly_income]
-
-            # Memasukkan fitur ke dalam array
             features = np.array([[age, gender, monthly_income, family_size]])
             prediction = model.predict(features)
             result = "Positive" if prediction[0] == 1 else "Negative"
+            st.success(f"Predicted Feedback: {result}")
         except Exception as e:
-            result = f"Terjadi kesalahan dalam prediksi: {str(e)}"
+            st.error(f"Error occurred: {str(e)}")
 
-        return render_template("result.html", msg=f"Prediksi Feedback: {result}")
-    else:
-        return render_template('predict.html')
-
-if __name__ == '__main__':
-    print(f"Direktori kerja saat ini: {os.getcwd()}")
-    app.run(debug=True)
+# Menampilkan konten berdasarkan pilihan menu
+if choice == "Home":
+    st.write("Welcome to the Customer Feedback Prediction App")
+elif choice == "Add Customer":
+    add_customer()
+elif choice == "List Customers":
+    list_customers()
+elif choice == "Predict Feedback":
+    predict_feedback()
