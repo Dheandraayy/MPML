@@ -38,7 +38,7 @@ def predict_feedback():
         unsafe_allow_html=True
     )
 
-    st.image('https://your-icon-image-url.com', width=100)  # Ganti URL ini dengan URL ikon Anda
+    st.image('https://icon-library.com/images/food-app-icon/food-app-icon-0.jpg', width=100)  # Ganti URL ini dengan URL ikon Anda
     st.title("Customer Feedback Prediction App")
     st.subheader("Predict Customer Feedback")
     with st.form(key="predict_form"):
