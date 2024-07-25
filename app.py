@@ -15,6 +15,30 @@ else:
 
 # Fungsi untuk prediksi feedback pelanggan
 def predict_feedback():
+    # Tambahkan CSS kustom untuk latar belakang dan ikon
+    st.markdown(
+        """
+        <style>
+        body {
+            background-image: url('https://www.istockphoto.com/photo/close-up-woman-sitting-and-orde-food-online-on-laptop-computer-in-add-to-cart-gm1043459006-279306758?utm_campaign=srp_photos_top&utm_content=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2FOnline-Food&utm_medium=affiliate&utm_source=unsplash&utm_term=Online+Food%3A%3A%3A');  /* Ganti URL ini dengan URL gambar latar belakang Anda */
+            background-size: cover;
+        }
+        .stApp {
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        .icon {
+            width: 100px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.image('https://your-icon-image-url.com', width=100)  # Ganti URL ini dengan URL ikon Anda
     st.title("Customer Feedback Prediction App")
     st.subheader("Predict Customer Feedback")
     with st.form(key="predict_form"):
