@@ -1,5 +1,5 @@
 import streamlit as st
-import joblib
+import pickle
 import numpy as np
 import os
 
@@ -7,7 +7,8 @@ import os
 model_file = 'best_model_knn.pkl'
 if os.path.exists(model_file):
     try:
-        model = joblib.load(model_file)
+        with open(model_file, 'rb') as file:
+            model = pickle.load(file)
         print(f"Model {model_file} berhasil dimuat.")
     except Exception as e:
         st.error(f"Error loading model: {str(e)}")
@@ -44,7 +45,6 @@ def predict_feedback():
     st.image('https://icon-library.com/images/food-app-icon/food-app-icon-0.jpg', width=100)  # Ganti URL ini dengan URL ikon Anda
     st.title("Customer Feedback Prediction App")
     st.subheader("Predict Customer Feedback")
-    
     with st.form(key="predict_form"):
         age = st.number_input("Age", min_value=0, step=1)
         gender = st.selectbox("Gender", ["Male", "Female"])
@@ -54,7 +54,6 @@ def predict_feedback():
 
     if predict_button:
         try:
-            # Mapping gender and income to numerical values
             gender_map = {'Male': 0, 'Female': 1}
             income_map = {
                 'No Income': 0,
@@ -63,19 +62,11 @@ def predict_feedback():
                 '25001 to 50000': 3,
                 'More than 50000': 4
             }
-            
-            # Convert inputs to numerical format
-            gender_num = gender_map[gender]
-            income_num = income_map[monthly_income]
-            
-            # Prepare features array for prediction
-            features = np.array([[age, gender_num, income_num, family_size]])
-            
-            # Predict feedback
+            gender = gender_map[gender]
+            monthly_income = income_map[monthly_income]
+            features = np.array([[age, gender, monthly_income, family_size]])
             prediction = model.predict(features)
             result = "Positive" if prediction[0] == 1 else "Negative"
-            
-            # Display result
             st.success(f"Predicted Feedback: {result}")
         except Exception as e:
             st.error(f"Error occurred: {str(e)}")
