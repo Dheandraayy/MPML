@@ -36,8 +36,8 @@ def main():
             data = pd.DataFrame({
                 'Age': [age],
                 'Gender': [gender_map[gender]],
-                'Monthly Income': [income_map[monthly_income]],
-                'Family size': [family_size]
+                'Monthly_Income': [income_map[monthly_income]],
+                'Family_Size': [family_size]
             })
 
             # Prediksi
