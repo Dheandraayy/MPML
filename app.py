@@ -9,7 +9,10 @@ if os.path.exists(model_file):
     try:
         with open(model_file, 'rb') as file:
             model = pickle.load(file)
-        print(f"Model {model_file} berhasil dimuat.")
+            # Check the type of the loaded model
+            if not hasattr(model, 'predict'):
+                raise TypeError("Loaded object does not have a 'predict' method")
+            print(f"Model {model_file} berhasil dimuat.")
     except Exception as e:
         st.error(f"Error loading model: {str(e)}")
         st.stop()
@@ -54,6 +57,7 @@ def predict_feedback():
 
     if predict_button:
         try:
+            # Mapping values
             gender_map = {'Male': 0, 'Female': 1}
             income_map = {
                 'No Income': 0,
@@ -64,7 +68,11 @@ def predict_feedback():
             }
             gender = gender_map[gender]
             monthly_income = income_map[monthly_income]
+
+            # Creating feature array
             features = np.array([[age, gender, monthly_income, family_size]])
+
+            # Predicting feedback
             prediction = model.predict(features)
             result = "Positive" if prediction[0] == 1 else "Negative"
             st.success(f"Predicted Feedback: {result}")
