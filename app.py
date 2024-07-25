@@ -4,7 +4,7 @@ import pandas as pd
 import os
 
 # Memuat model
-model_path = 'best_model_xgb_feedback.pkl'
+model_path = 'best_model_xgb.pkl'
 if not os.path.isfile(model_path):
     raise FileNotFoundError(f"File model {model_path} tidak ada.")
 model = joblib.load(model_path)
